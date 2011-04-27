@@ -42,10 +42,10 @@ class StatusBar(object):
 
         try:
             fontsize = 7000
-            self.Label.set_markup('<span size="%s" bgcolor="maroon" color="white"> Loading... </span>' % (fontsize))
+            self.Label.set_markup('<span size="%s" bgcolor="white" color="black"> Loading... </span>' % (fontsize))
             # compare heights, height of logo is the important one
             while self.LogoEventbox.size_request()[1] > self.Label.size_request()[1]:
-                self.Label.set_markup('<span size="%s" bgcolor="maroon" color="white"> Loading... </span>' % (fontsize))
+                self.Label.set_markup('<span size="%s" bgcolor="white" color="black"> Loading... </span>' % (fontsize))
                 fontsize += 250
             self.output.fontsize = fontsize
         except:
