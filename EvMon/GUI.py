@@ -12,6 +12,8 @@ except Exception, err:
     import sys
     sys.exit()
 import gtk
+import os
+import platform
 import Statusbar
 
 class GUI(object):
@@ -24,6 +26,8 @@ class GUI(object):
         self.website = "http://evmon.ryrlen.org"
         self.copyright = "©2011-2015 Mattias Ryrlén\nmattias@ryrlen.org"
         self.comments = "Eventum Queue monitor for your desktop"
+        self.Resources = ""
+        self.conf = ""
 
         # get resources directory from current directory - only if not being set before by pkg_resources
         if self.Resources == "":
@@ -34,9 +38,6 @@ class GUI(object):
 
         # create all GUI widgets
         self.CreateOutputVisuals()
-
-        # set size of popup-window
-        self.popwin.Resize()
 
         # flag which is set True if already notifying
         self.Notifying = False
@@ -54,3 +55,4 @@ class GUI(object):
         # set app icon for all app windows
         gtk.window_set_default_icon_from_file(self.Resources + os.sep + self.name + self.BitmapSuffix)
 
+        self.statusbar = Statusbar.StatusBar(conf=self.conf, output=self)
