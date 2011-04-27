@@ -31,8 +31,8 @@ class GUI(object):
 
         # get resources directory from current directory - only if not being set before by pkg_resources
         if self.Resources == "":
-            if os.path.exists(os.path.normcase(os.getcwd() + os.sep + "Evmon" + os.sep + "resources")):
-                self.Resources = os.path.normcase(os.getcwd() + os.sep + "Evmon" + os.sep + "resources")
+            if os.path.exists(os.path.normcase(os.getcwd() + os.sep + "EvMon" + os.sep + "resources")):
+                self.Resources = os.path.normcase(os.getcwd() + os.sep + "EvMon" + os.sep + "resources")
             else:
                 self.Resources = os.path.normcase(os.getcwd() + os.sep + "resources")
 
