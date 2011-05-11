@@ -8,31 +8,18 @@ import Queue
 import socket
 
 from EvMon import Actions
-########## Config
-#
-email = ""
-passwd = ""
-base_url = "http://tickets.op5.com"
-login_url = base_url + "/login.php"
-
-values = {
-          'cat' : 'login',
-          'url' : '',
-          'email' : email,
-          'passwd' : passwd,
-          'Submit' : 'Login',
-         }
-
 
 # timeout in seconds
 timeout = 10
 socket.setdefaulttimeout(timeout)
 
-
+# Create Server Object and set config options for the server
 server = Actions.GenericServer()
+server.username = ""
+server.password = ""
+server.base_url = "https://tickets.op5.com"
 
-result = server.FetchURL(login_url, cgi_data=values)
-
-
-print result
-
+if server.Login() == True:
+    print "Login Successful"
+else:
+    print "Login Failed"
