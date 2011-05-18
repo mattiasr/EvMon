@@ -16,6 +16,8 @@ class GenericServer(object):
         self.username = None
         self.password = None
         self.base_url = None
+        self.project_id = None
+        self.project_name = None
 
 
     def FetchURL(self, url, giveback="raw", cgi_data=None):
@@ -25,12 +27,17 @@ class GenericServer(object):
         urlopener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.Cookie))
         request = urllib2.Request(url, urllib.urlencode(cgi_data))
         response = urlopener.open(request)
+        result = response.read()
+        response.close()
+
+        del response
 
         if giveback == "raw":
-            result = response.read()
-            response.close()
-            del response
             return result
+
+        if giveback == "obj":
+            soup = BeautifulSoup(result, convertEntities=BeautifulSoup.ALL_ENTITIES)
+            return soup
 
     def Login(self):
         """
@@ -47,7 +54,29 @@ class GenericServer(object):
          }
 
         result = self.FetchURL(self.login_url, cgi_data=values)
-        return True
+        #print result
+        soup = BeautifulSoup(result)
+        option = soup.findAll('option')
+
+        project = []
+        for element in option:
+            opt = [element['value'], element['label']]
+            project.append(opt)
+            print "[" + element['value'] + "] " + element['label']
+
+        # Selecting project
+        self.project_id = 1
+        self.project_name = 'op5 Support'
+
+        return self.goto_project()
+
+
+    def get_project_id(self):
+        return str(self.project_id)
+
+
+    def get_project_name(self):
+        return str(self.project_name)
 
 
     def get_username(self):
@@ -66,8 +95,26 @@ class GenericServer(object):
         return str(self.password)
 
 
-    def ListProjects():
+    def goto_project(self):
         """
-        Get a list of the projects avaible for the user
+        Go to the project you want to login to.
         """
+        print "Fetching Project: [" + self.get_project_id() + "] " + self.get_project_name()
+        self.select_project_url = self.base_url + '/select_project.php'
+        values = {
+                  'cat' : 'select',
+                  'url' : '',
+                  'project' : self.get_project_id(),
+                  'remember' : '1',
+                  'Submit' : 'Login',
+         }
+
+        result = self.FetchURL(self.select_project_url, cgi_data=values)
+        soup = BeautifulSoup(result)
+        elements = soup.findAll('a')
+        for url in elements:
+            if url['href'] == '/logout.php':
+                return True
+
+        return False
 

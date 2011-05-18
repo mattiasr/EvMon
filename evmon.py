@@ -21,5 +21,18 @@ server.base_url = "https://tickets.op5.com"
 
 if server.Login() == True:
     print "Login Successful"
+
+    #Fetching list of issues
+
+
+    server.list_url = str(server.base_url) + '/list.php'
+    values = {}
+    result = server.FetchURL(server.list_url, giveback='obj', cgi_data=values)
+#    print result
+    elements = result.findAll(attrs={'class': 'default_white', 'nowrap' : 'nowrap'})
+
+    for element in elements:
+        print element
+
 else:
     print "Login Failed"
