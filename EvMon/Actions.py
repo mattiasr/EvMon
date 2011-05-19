@@ -1,9 +1,20 @@
 import urllib
 import urllib2
 import cookielib
+import base64
 
 from EvMon.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
+class GenericIssue(object):
+    def __init__(self, kwds):
+        self.__dict__ = dict(((x.replace(' ', '_'), y) for x, y in kwds.items()))
+
+
+    def __repr__(self):
+        str = ''
+        for x in self.__dict__:
+            str += "%s: %s\n" % (x, self.__dict__[x] or '')
+        return str
 
 class GenericServer(object):
 
@@ -18,12 +29,36 @@ class GenericServer(object):
         self.base_url = None
         self.project_id = None
         self.project_name = None
+        self.issues = []
+
+
+    def addIssue(self, object):
+        self.issues.append(object)
+
+
+    def getIssues(self, Filter=None):
+        self.list_url = str(self.base_url) + '/list.php' + Filter
+        values = {}
+
+        result = self.FetchURL(self.list_url, giveback='obj', cgi_data=values)
+        csv_list = result.find(attrs={'name':'csv_data'})['value']
+
+        issues = base64.b64decode(csv_list).split('\n')
+
+        colnames = issues.pop(0)
+        colnames = colnames.split('\t')
+
+        i = 1
+        for row in issues:
+            issue = GenericIssue(dict([(colnames[i], x) for i, x in enumerate(row.split('\t'))]))
+            self.addIssue(issue)
 
 
     def FetchURL(self, url, giveback="raw", cgi_data=None):
         """
         Get Contents from Eventum server
         """
+        print 'Fetching: ' + url
         urlopener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.Cookie))
         request = urllib2.Request(url, urllib.urlencode(cgi_data))
         response = urlopener.open(request)

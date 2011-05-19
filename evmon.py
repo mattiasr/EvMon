@@ -6,7 +6,9 @@
 import os
 import Queue
 import socket
+import base64
 
+from time import sleep
 from EvMon import Actions
 
 # timeout in seconds
@@ -22,17 +24,23 @@ server.base_url = "https://tickets.op5.com"
 if server.Login() == True:
     print "Login Successful"
 
-    #Fetching list of issues
+    while True:
+        #Fetching list of issues
+        server.issues = []
+        server.getIssues(Filter='?cat=search&status=&hide_closed=1')
 
+        count = 0
+        total = 0
+        for issue in server.issues:
+            if issue.Status == 'open' or issue.Status == 'new':
+                print '[' + issue.Issue_ID + '] ' + issue.Status + ' -= ' + issue.Summary + ' =-'
+                count+=1
 
-    server.list_url = str(server.base_url) + '/list.php'
-    values = {}
-    result = server.FetchURL(server.list_url, giveback='obj', cgi_data=values)
-#    print result
-    elements = result.findAll(attrs={'class': 'default_white', 'nowrap' : 'nowrap'})
+            total+=1
+        print '================================================================================='
+        print 'Total Issues: ' + str(count) + ' Filtered: ' + str((total - count))
 
-    for element in elements:
-        print element
+        sleep(20)
 
 else:
     print "Login Failed"
