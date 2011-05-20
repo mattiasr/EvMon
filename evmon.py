@@ -7,6 +7,7 @@ import os
 import Queue
 import socket
 import base64
+import ConfigParser
 
 from time import sleep
 from EvMon import Actions
@@ -14,12 +15,14 @@ from EvMon import Actions
 # timeout in seconds
 timeout = 10
 socket.setdefaulttimeout(timeout)
+config = ConfigParser.SafeConfigParser()
+config.read(os.path.expanduser('~/.evmon.conf'))
 
 # Create Server Object and set config options for the server
 server = Actions.GenericServer()
-server.username = ""
-server.password = ""
-server.base_url = "https://tickets.op5.com"
+server.username = config.get('Server', 'username')
+server.password = config.get('Server', 'password')
+server.base_url = config.get('Server', 'base_url')
 
 if server.Login() == True:
     print "Login Successful"
