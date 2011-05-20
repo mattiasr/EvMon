@@ -33,14 +33,17 @@ if server.Login() == True:
         total = 0
         for issue in server.issues:
             if issue.Status == 'open' or issue.Status == 'new':
-                print '[' + issue.Issue_ID + '] ' + issue.Status + ' -= ' + issue.Summary + ' =-'
+                if issue.Assigned == '':
+                    issue.Assigned = 'Unassigned'
+
+                print '[' + issue.Issue_ID + '] ' + issue.Status + ' [' + issue.Assigned + '] ' + ' -= ' + issue.Summary + ' =-'
                 count+=1
 
             total+=1
         print '================================================================================='
         print 'Total Issues: ' + str(count) + ' Filtered: ' + str((total - count))
 
-        sleep(20)
+        sleep(120)
 
 else:
     print "Login Failed"
