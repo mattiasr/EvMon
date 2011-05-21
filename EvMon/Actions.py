@@ -29,19 +29,25 @@ class GenericServer(object):
         self.base_url = None
         self.project_id = None
         self.project_name = None
+        self.base_filters = '?cat=search&status=&hide_closed=1'
         self.issues = []
+        self.firstRun = None
 
 
     def addIssue(self, object):
         self.issues.append(object)
 
 
-    def getIssues(self, Filter=None):
-        self.list_url = str(self.base_url) + '/list.php' + Filter
-        values = {}
+    def getIssues(self, csv_list=None, Filter=None):
+        if not csv_list:
+            if not Filter:
+                self.list_url = str(self.base_url) + '/list.php' + self.base_filters
+            else:
+                self.list_url = str(self.base_url) + '/list.php' + Filter
+            values = {}
 
-        result = self.FetchURL(self.list_url, giveback='obj', cgi_data=values)
-        csv_list = result.find(attrs={'name':'csv_data'})['value']
+            result = self.FetchURL(self.list_url, giveback='obj', cgi_data=values)
+            csv_list = result.find(attrs={'name':'csv_data'})['value']
 
         issues = base64.b64decode(csv_list).split('\n')
 
@@ -89,7 +95,6 @@ class GenericServer(object):
          }
 
         result = self.FetchURL(self.login_url, cgi_data=values)
-        #print result
         soup = BeautifulSoup(result)
         option = soup.findAll('option')
 
@@ -135,21 +140,23 @@ class GenericServer(object):
         Go to the project you want to login to.
         """
         print "Fetching Project: [" + self.get_project_id() + "] " + self.get_project_name()
+
+        goto_url = str(self.base_url) + '/list.php' + str(self.base_filters)
         self.select_project_url = self.base_url + '/select_project.php'
         values = {
                   'cat' : 'select',
-                  'url' : '',
+                  'url' : goto_url,
                   'project' : self.get_project_id(),
                   'remember' : '1',
                   'Submit' : 'Login',
          }
 
-        result = self.FetchURL(self.select_project_url, cgi_data=values)
-        soup = BeautifulSoup(result)
-        elements = soup.findAll('a')
-        for url in elements:
-            if url['href'] == '/logout.php':
-                return True
+        result = self.FetchURL(self.select_project_url, giveback='obj', cgi_data=values)
+
+        if result.find(attrs={'href':'/logout.php'}) is not None:
+            csv_list = result.find(attrs={'name':'csv_data'})['value']
+            self.getIssues(csv_list=csv_list)
+            return True
 
         return False
 

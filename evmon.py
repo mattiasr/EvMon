@@ -27,10 +27,14 @@ server.base_url = config.get('Server', 'base_url')
 if server.Login() == True:
     print "Login Successful"
 
+    # Since we got the first result during login, we just parse the data first time
+    server.firstRun = True
+
     while True:
-        #Fetching list of issues
-        server.issues = []
-        server.getIssues(Filter='?cat=search&status=&hide_closed=1')
+        if not server.firstRun:
+            #Fetching list of issues
+            server.issues = []
+            server.getIssues()
 
         count = 0
         total = 0
@@ -46,7 +50,8 @@ if server.Login() == True:
         print '================================================================================='
         print 'Total Issues: ' + str(count) + ' Filtered: ' + str((total - count))
 
-        sleep(120)
+        sleep(20)
+        server.firstRun = False
 
 else:
     print "Login Failed"
