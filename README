@@ -1,0 +1,19 @@
+EvMon (Eventum Monitor)
+
+Simple little program that fetches info from eventum installation and display
+count of selected queues.
+
+Get visual and sound notifications if something changes.
+
+All to speed up your local support ticket handeling :)
+
+Setup:
+create a config file called .evmon.conf in your ~
+Layout:
+
+[Server]
+base_url = https://<url_to_your_eventum_installation>
+username = <username>
+password = <password>
+
+done :)
