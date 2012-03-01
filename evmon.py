@@ -1,4 +1,4 @@
-#!/opt/local/bin/python
+#!/usr/bin/env python
 # encoding: utf-8
 
 #Master file to be executed so that EvMon starts correct
@@ -29,17 +29,20 @@ if server.Login() == True:
 
     # Since we got the first result during login, we just parse the data first time
     server.firstRun = True
-
+    os.system('clear')
     while True:
         if not server.firstRun:
             #Fetching list of issues
             server.issues = []
             server.getIssues()
+            os.system('clear')
 
         count = 0
         total = 0
+        print '===================================== EvMon ====================================='
         for issue in server.issues:
-            if issue.Status == 'open' or issue.Status == 'new':
+            #if issue.Status == 'open' or issue.Status == 'new':
+            if issue.Status == 'new':
                 if issue.Assigned == '':
                     issue.Assigned = 'Unassigned'
 
@@ -47,10 +50,13 @@ if server.Login() == True:
                 count+=1
 
             total+=1
+        if count == 0:
+            print "No issues"
+
         print '================================================================================='
         print 'Total Issues: ' + str(count) + ' Filtered: ' + str((total - count))
 
-        sleep(20)
+        sleep(60)
         server.firstRun = False
 
 else:
