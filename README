@@ -17,3 +17,12 @@ username = <username>
 password = <password>
 
 done :)
+
+Supported options:
+base_url = <url>
+username = <string>
+password = <string>
+project_id = <int>
+filter_status <comma-separated list>
+debug = <int>
+poll_interval = <int>
