@@ -30,11 +30,9 @@ except:
 try: server.project_id = config.get('Server', 'project_id')
 except: pass
 
-try: server.filter_status = config.get('Server', 'filter_status')
-except: print "Warning, missing option: filter_status"
-
+# Not yet implemented
 try: server.filter_assigned = config.get('Server', 'filter_assigned')
-except: print "Warning, missing option: filter_assigned"
+except: pass
 
 try: server.debug = int(config.get('Server', 'debug'))
 except: pass
