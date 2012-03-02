@@ -30,8 +30,12 @@ class GenericServer(object):
         self.project_id = None
         self.project_name = None
         self.base_filters = '?cat=search&status=&hide_closed=1&nosave=1'
+        self.assined = None
+        self.filter_status = None
         self.issues = []
         self.firstRun = None
+        self.debug = False
+        self.poll_interval = 60
 
 
     def addIssue(self, object):
@@ -64,7 +68,7 @@ class GenericServer(object):
         """
         Get Contents from Eventum server
         """
-        print 'Fetching: ' + url
+        if self.debug: print 'Fetching: ' + url
         urlopener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.Cookie))
         request = urllib2.Request(url, urllib.urlencode(cgi_data))
         response = urlopener.open(request)
@@ -102,11 +106,15 @@ class GenericServer(object):
         for element in option:
             opt = [element['value'], element['label']]
             project.append(opt)
-            print "[" + element['value'] + "] " + element['label']
+            if self.project_id == None:
+                print "[" + element['value'] + "] " + element['label']
+            if self.project_id == element['value']:
+                self.project_name = element['label']
 
-        # Selecting project
-        self.project_id = 1
-        self.project_name = 'op5 Support'
+        if self.project_id == None:
+            print "Warning: No project selected, update your config with"
+            print "         project_id from one of the above."
+            exit()
 
         return self.goto_project()
 
@@ -139,7 +147,7 @@ class GenericServer(object):
         """
         Go to the project you want to login to.
         """
-        print "Fetching Project: [" + self.get_project_id() + "] " + self.get_project_name()
+        if self.debug: print "Fetching Project: [" + self.get_project_id() + "] " + self.get_project_name()
 
         goto_url = str(self.base_url) + '/list.php' + str(self.base_filters)
         self.select_project_url = self.base_url + '/select_project.php'

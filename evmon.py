@@ -20,12 +20,30 @@ config.read(os.path.expanduser('~/.evmon.conf'))
 
 # Create Server Object and set config options for the server
 server = Actions.GenericServer()
-server.username = config.get('Server', 'username')
-server.password = config.get('Server', 'password')
-server.base_url = config.get('Server', 'base_url')
+try:
+    server.username = config.get('Server', 'username')
+    server.password = config.get('Server', 'password')
+    server.base_url = config.get('Server', 'base_url')
+except:
+    print "ERROR: Required variables not found, please read README"
+
+try: server.project_id = config.get('Server', 'project_id')
+except: pass
+
+try: server.filter_status = config.get('Server', 'filter_status')
+except: print "Warning, missing option: filter_status"
+
+try: server.filter_assigned = config.get('Server', 'filter_assigned')
+except: print "Warning, missing option: filter_assigned"
+
+try: server.debug = int(config.get('Server', 'debug'))
+except: pass
+
+try: server.poll_interval = int(config.get('Server', 'poll_interval'))
+except: pass
 
 if server.Login() == True:
-    print "Login Successful"
+    if server.debug: print "Login Successful"
 
     # Since we got the first result during login, we just parse the data first time
     server.firstRun = True
@@ -56,7 +74,7 @@ if server.Login() == True:
         print '================================================================================='
         print 'Total Issues: ' + str(count) + ' Filtered: ' + str((total - count))
 
-        sleep(60)
+        sleep(server.poll_interval)
         server.firstRun = False
 
 else:
