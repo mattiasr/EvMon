@@ -42,6 +42,9 @@ except: pass
 try: server.poll_interval = int(config.get('Server', 'poll_interval'))
 except: pass
 
+try: server.filter_status = config.get('Server', 'filter_status').split(",")
+except: pass
+
 if server.Login() == True:
     if server.debug: print "Login Successful"
 
@@ -59,8 +62,7 @@ if server.Login() == True:
         total = 0
         print '===================================== EvMon ====================================='
         for issue in server.issues:
-            #if issue.Status == 'open' or issue.Status == 'new':
-            if issue.Status == 'new':
+            if server.validate_status(issue.Status):
                 if issue.Assigned == '':
                     issue.Assigned = 'Unassigned'
 

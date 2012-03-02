@@ -168,3 +168,14 @@ class GenericServer(object):
 
         return False
 
+    def validate_status(self, status):
+        """
+        Return true if a status should be filtered in.
+        """
+        if not self.filter_status or self.filter_status[0] == "":
+            return True
+
+        for filter_status in self.filter_status:
+            if filter_status == status:
+                return True
+        return False
