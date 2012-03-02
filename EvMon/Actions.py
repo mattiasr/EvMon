@@ -32,6 +32,7 @@ class GenericServer(object):
         self.base_filters = '?cat=search&status=&hide_closed=1&nosave=1'
         self.assined = None
         self.filter_status = None
+        self.filter_assigned = None
         self.issues = []
         self.firstRun = None
         self.debug = False
@@ -168,7 +169,7 @@ class GenericServer(object):
 
         return False
 
-    def validate_status(self, status):
+    def validate_status(self, issue):
         """
         Return true if a status should be filtered in.
         """
@@ -176,6 +177,30 @@ class GenericServer(object):
             return True
 
         for filter_status in self.filter_status:
-            if filter_status == status:
+            if filter_status == issue.Status:
                 return True
         return False
+
+    def validate_assigned(self, issue):
+        if not self.filter_assigned or self.filter_assigned[0] == "":
+            return True
+
+        import re
+
+        for filter_assigned in self.filter_assigned:
+            if re.match(filter_assigned, issue.Assigned):
+                return True
+        return False
+
+    def filter_issue(self, issue):
+        """
+        Return true if all is good.
+        """
+
+        filtered_in = False
+
+        # Should we filter based on assigned?
+        if self.validate_assigned(issue) and self.validate_status(issue):
+            filtered_in = True
+
+        return filtered_in

@@ -30,8 +30,7 @@ except:
 try: server.project_id = config.get('Server', 'project_id')
 except: pass
 
-# Not yet implemented
-try: server.filter_assigned = config.get('Server', 'filter_assigned')
+try: server.filter_assigned = config.get('Server', 'filter_assigned').split(",")
 except: pass
 
 try: server.debug = int(config.get('Server', 'debug'))
@@ -60,7 +59,7 @@ if server.Login() == True:
         total = 0
         print '===================================== EvMon ====================================='
         for issue in server.issues:
-            if server.validate_status(issue.Status):
+            if server.filter_issue(issue):
                 if issue.Assigned == '':
                     issue.Assigned = 'Unassigned'
 
