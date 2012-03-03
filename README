@@ -19,10 +19,11 @@ password = <password>
 done :)
 
 Supported options:
-base_url = <url>
-username = <string>
-password = <string>
-project_id = <int>
-filter_status <comma-separated list>
-debug = <int>
-poll_interval = <int>
+base_url             = <url>, include http:// or https://
+username             = <string>
+password             = <string>
+project_id           = <int>
+filter_status        = <comma-separated list>, Name of the Statuses
+filter_assigned      = <comma-separated list>, Full names of Assignees
+debug                = <int>, 1 = on, 0 = off
+poll_interval        = <int>, interval in seconds
