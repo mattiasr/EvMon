@@ -29,7 +29,7 @@ class GenericServer(object):
         self.base_url = None
         self.project_id = None
         self.project_name = None
-        self.base_filters = '?cat=search&status=&hide_closed=1&nosave=1'
+        self.base_filters = '?cat=search&status=&hide_closed=1&nosave=1&keywords='
         self.assined = None
         self.filter_status = None
         self.filter_assigned = None
