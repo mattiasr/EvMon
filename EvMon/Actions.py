@@ -104,6 +104,7 @@ class GenericServer(object):
         option = soup.findAll('option')
 
         project = []
+
         for element in option:
             opt = [element['value'], element['label']]
             project.append(opt)
@@ -117,8 +118,15 @@ class GenericServer(object):
             print "         project_id from one of the above."
             exit()
 
-        return self.goto_project()
-
+        if len(option) == 1:
+            if self.debug: print "Only one project, lets continue"
+            goto_url = str(self.base_url) + '/list.php' + str(self.base_filters)
+            result = self.FetchURL(goto_url, giveback='obj', cgi_data=values)
+            csv_list = result.find(attrs={'name':'csv_data'})['value']
+            self.getIssues(csv_list=csv_list)
+            return True
+        else:
+            return self.goto_project()
 
     def get_project_id(self):
         return str(self.project_id)
