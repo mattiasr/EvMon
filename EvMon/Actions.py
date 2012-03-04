@@ -1,7 +1,10 @@
+import os
 import urllib
 import urllib2
 import cookielib
 import base64
+import md5
+import ConfigParser
 
 from EvMon.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
@@ -37,6 +40,7 @@ class GenericServer(object):
         self.firstRun = None
         self.debug = False
         self.poll_interval = 60
+        self.config_hash = None
 
 
     def addIssue(self, object):
@@ -212,3 +216,47 @@ class GenericServer(object):
             filtered_in = True
 
         return filtered_in
+
+    def reload_config(self):
+        """
+        Reload the config file.
+        """
+
+        config_hash = md5.new(file(os.path.expanduser('~/.evmon.conf')).read())
+
+        print "Last Hash   : " + str(self.config_hash)
+        print "Current Hash: " + str(config_hash.hexdigest())
+
+        if self.config_hash != str(config_hash.hexdigest()):
+            default = GenericServer()
+            if self.debug:
+                print "Config changed, reloading..."
+
+            config = ConfigParser.SafeConfigParser()
+            config.read(os.path.expanduser('~/.evmon.conf'))
+
+            try:
+                self.username = config.get('Server', 'username')
+                self.password = config.get('Server', 'password')
+                self.base_url = config.get('Server', 'base_url')
+            except:
+                print "ERROR: Required variables not found, please read README"
+
+            try: self.project_id = config.get('Server', 'project_id')
+            except: pass
+
+            try: self.filter_assigned = config.get('Server', 'filter_assigned').split(",")
+            except: self.filter_assigned = default.filter_assigned
+
+            try: self.debug = int(config.get('Server', 'debug'))
+            except: self.debug = default.debug
+
+            try: self.poll_interval = int(config.get('Server', 'poll_interval'))
+            except: self.poll_interval = default.poll_interval
+
+            try: self.filter_status = config.get('Server', 'filter_status').split(",")
+            except: self.filter_status = default.filter_status
+
+            self.config_hash = config_hash.hexdigest()
+            del config_hash, default
+

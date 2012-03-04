@@ -7,7 +7,6 @@ import os
 import Queue
 import socket
 import base64
-import ConfigParser
 
 from time import sleep
 from EvMon import Actions
@@ -15,32 +14,10 @@ from EvMon import Actions
 # timeout in seconds
 timeout = 10
 socket.setdefaulttimeout(timeout)
-config = ConfigParser.SafeConfigParser()
-config.read(os.path.expanduser('~/.evmon.conf'))
 
 # Create Server Object and set config options for the server
 server = Actions.GenericServer()
-try:
-    server.username = config.get('Server', 'username')
-    server.password = config.get('Server', 'password')
-    server.base_url = config.get('Server', 'base_url')
-except:
-    print "ERROR: Required variables not found, please read README"
-
-try: server.project_id = config.get('Server', 'project_id')
-except: pass
-
-try: server.filter_assigned = config.get('Server', 'filter_assigned').split(",")
-except: pass
-
-try: server.debug = int(config.get('Server', 'debug'))
-except: pass
-
-try: server.poll_interval = int(config.get('Server', 'poll_interval'))
-except: pass
-
-try: server.filter_status = config.get('Server', 'filter_status').split(",")
-except: pass
+server.reload_config()
 
 if server.Login() == True:
     if server.debug: print "Login Successful"
@@ -50,6 +27,9 @@ if server.Login() == True:
     os.system('clear')
     while True:
         if not server.firstRun:
+            #Any config changes? if so, reload them
+            server.reload_config()
+
             #Fetching list of issues
             server.issues = []
             server.getIssues()
