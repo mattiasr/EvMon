@@ -1,4 +1,4 @@
-import os
+import os, sys
 import urllib
 import urllib2
 import cookielib
@@ -224,7 +224,11 @@ class GenericServer(object):
         Reload the config file.
         """
 
-        config_hash = md5.new(file(os.path.expanduser('~/.evmon.conf')).read())
+        try:
+            config_hash = md5.new(file(os.path.expanduser('~/.evmon.conf')).read())
+        except IOError:
+            print "Error: Couldn't find configuration file ~/.evmon.conf, please read README"
+            sys.exit(1)
 
         if self.debug:
             print "Last Hash   : " + str(self.config_hash)
