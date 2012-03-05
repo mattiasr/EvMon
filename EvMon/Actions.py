@@ -66,6 +66,8 @@ class GenericServer(object):
         i = 1
         for row in issues:
             issue = GenericIssue(dict([(colnames[i], x) for i, x in enumerate(row.split('\t'))]))
+            if issue.Assigned == '':
+                issue.Assigned = 'Unassigned'
             self.addIssue(issue)
 
 
@@ -224,8 +226,9 @@ class GenericServer(object):
 
         config_hash = md5.new(file(os.path.expanduser('~/.evmon.conf')).read())
 
-        print "Last Hash   : " + str(self.config_hash)
-        print "Current Hash: " + str(config_hash.hexdigest())
+        if self.debug:
+            print "Last Hash   : " + str(self.config_hash)
+            print "Current Hash: " + str(config_hash.hexdigest())
 
         if self.config_hash != str(config_hash.hexdigest()):
             default = GenericServer()

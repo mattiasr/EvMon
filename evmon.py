@@ -40,9 +40,6 @@ if server.Login() == True:
         print '===================================== EvMon ====================================='
         for issue in server.issues:
             if server.filter_issue(issue):
-                if issue.Assigned == '':
-                    issue.Assigned = 'Unassigned'
-
                 print '[' + issue.Issue_ID + '] ' + issue.Status + ' [' + issue.Assigned + '] ' + ' -= ' + issue.Summary + ' =-'
                 count+=1
 
