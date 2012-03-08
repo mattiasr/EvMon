@@ -122,7 +122,7 @@ class GenericServer(object):
         if self.project_id == None:
             print "Warning: No project selected, update your config with"
             print "         project_id from one of the above."
-            exit()
+            sys.exit(1)
 
         if len(option) == 1:
             if self.debug: print "Only one project, lets continue"
