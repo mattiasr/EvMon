@@ -32,7 +32,7 @@ class GenericServer(object):
         self.base_url = None
         self.project_id = None
         self.project_name = None
-        self.base_filters = '?cat=search&status=&hide_closed=1&nosave=1&keywords='
+        self.base_filters = '?cat=search&hidden1=&show_authorized_issues=&show_notification_list_issues=&custom_field=&created_date=&updated_date=&first_response_date=&last_response_date=&closed_date=&keywords=&search_type=customer&users=&category=&priority=&status=&reporter=&release=&hide_closed=1&rows=ALL&sort_by=iss_pri_id&sort_order=asc&custom_field%5B2%5D%5Bfilter_type%5D=eq&title=&nosave=1'
         self.assined = None
         self.filter_status = None
         self.filter_assigned = None
